@@ -279,11 +279,11 @@ def minimax(board, depth, alpha, beta, maximizing, player):
 
 board = initialize_board()                                              # Make an empty matrix
 game_running = True                                                     # Set the game state to running
-turn = random.choice([constant.PLAYER_1-1, constant.PLAYER_2-1])      # Randomly pick what player starts. PLAYER_#-1 so 1 and 2 is 0 and 1
+turn = random.choice([constant.PLAYER_1, constant.PLAYER_2]) - 1        # Randomly pick what player starts. -1 so 1 and 2 is 0 and 1
 
 pygame.init()                                                           # Initialize Pygames
 pygame.display.set_caption('Connect 4')                                 # Title bar message
-screen = pygame.display.set_mode(constant.WINDOW_SIZE)                 # Draw the window as screen
+screen = pygame.display.set_mode(constant.WINDOW_SIZE)                  # Draw the window as screen
 
 
 def end_game():
