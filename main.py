@@ -8,7 +8,8 @@ import math
 class Constant():
     def __init__(self):
         self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
-        self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
+        self.ALL_AI_PLAYERS = True                                              # Use if you want the AI to make all the moves
+        self.AI_DEPTH = 5                                                       # How many round in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
         self.PLAYER_1 = 1                                                       # Default Player
@@ -147,6 +148,7 @@ def draw_borad(board, heightlighted=None):
     pygame.display.update()
 
 
+# Return all the columns that are not full
 def get_valid_moves(board):
     valid_moves=[]
 
@@ -160,81 +162,115 @@ def get_valid_moves(board):
         return False
 
 
-# Picks a random location BAD
-def random_move(board):
-    valid_moves = get_valid_moves(board)
-    if valid_moves :
-        move = random.choice(valid_moves)
-        # Return as a string so the 0 index doesn't coundt as None
-        return str(move)
-    else:
-        return False
-
-# TODO Pls write this
-# def get_winner(board):
-#     if win(board, 1):
-#         return "P1"
-#     elif win(board, 2):
-#         return "P2"
-
-
 # Give a score to a selected secton of the bord
-def score_window(window, player, score):
+def evaluate_window(window, player):
+    score = 0
+    # Get the opponent player
+    if player == constant.PLAYER_1:
+        opponent = constant.PLAYER_2
+    else:
+        opponent = constant.PLAYER_1
+
+    # Score the player
     for i in range(0, constant.WINNING_COUNT-1):
         if window.count(player) == constant.WINNING_COUNT-i and window.count(constant.EMPTY) == i:
-            score += (constant.WINNING_COUNT - i) * (constant.WINNING_COUNT-i)
+            score += (constant.WINNING_COUNT - i) * 2.5
+    # Score the opponent
+    for i in range(0, constant.WINNING_COUNT-1):
+        if window.count(opponent) == constant.WINNING_COUNT-i and window.count(constant.EMPTY) == i:
+            score -= (constant.WINNING_COUNT - i) * 2.25
+
     return score
 
 
-def score_board(board, player):
+def evaluate_board(board, player):
     score = 0
+
+    # Score center col
+    center_array = [int(i) for i in list(board[:,constant.COLUMN_COUNT//2])]
+    center_count = center_array.count(player)
+    score += center_count * 3
+
     # Score horizontal
     for r in range(constant.ROW_COUNT):
         row_array = [int(i) for i in list(board[r,:])]
         for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
             window = row_array[c:c+constant.WINNING_COUNT]
-            score = score_window(window, player, score)
+            score += evaluate_window(window, player)
 
     # Score vertical
     for c in range(constant.COLUMN_COUNT):
         col_array = [int(i) for i in list(board[:,c])]
         for r in range(constant.ROW_COUNT-(constant.WINNING_COUNT-1)):
             window = col_array[r:r+constant.WINNING_COUNT]
-            score = score_window(window, player, score)
+            score += evaluate_window(window, player)
 
     # Score positivly sloped diaganold
     for r in range(constant.ROW_COUNT-(constant.WINNING_COUNT-1)):
         for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
             window = [board[r+i][c+i] for i in range(constant.WINNING_COUNT)]
-            score = score_window(window, player, score)
+            score += evaluate_window(window, player)
 
     # Score negativly sloped diaganold
     for r in range(constant.ROW_COUNT-(constant.WINNING_COUNT-1)):
         for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
-            window = [board[r-i][c-i] for i in range(constant.WINNING_COUNT)]
-            score = score_window(window, player, score)
+            window = [board[r+(constant.WINNING_COUNT-1)-i][c+i] for i in range(constant.WINNING_COUNT)]
+            score += evaluate_window(window, player)
 
     return score
 
 
-def best_move(board, player):
+def minimax(board, depth, alpha, beta, maximizing, player):
+    # Get the opponent player
+    if player == constant.PLAYER_1:
+        opponent = constant.PLAYER_2
+    else:
+        opponent = constant.PLAYER_1
+
     valid_moves = get_valid_moves(board)
-    best_score = 0
-    best_col = random.choice(valid_moves)
-    for col in valid_moves:
-        row = get_next_open_row(board, col)
-        temp_board = board.copy()
-        drop_piece(temp_board, row, col, player)
-        score = score_board(temp_board, player)
-        if score > best_score:
-            best_score = score
-            best_col = col
-    # Return as a string so the 0 index doesn't coundt as None
-    return str(best_col)
-
-
-def minimax(board, depth, maximizing):
-    pass
+    is_terminal = win(board, constant.PLAYER_1) or win(board, constant.PLAYER_2) or len(get_valid_moves(board)) == 0
+    if depth == 0 or is_terminal:
+        if is_terminal:
+            if win(board, player):
+                return (None, 100000000)
+            elif win(board, opponent):
+                return (None, -100000000)
+            else: # No more valid moves
+                return (None, 0)
+        else: # If the depth is 0
+            return (None, evaluate_board(board, player))
+    # Maximizing player
+    if maximizing:
+        value = -math.inf
+        column = random.choice(valid_moves)
+        for col in valid_moves:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, player)
+            new_score = minimax(b_copy, depth-1, alpha, beta, False, player)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return (column, value)
+    # Minimizing player
+    else:
+        value = math.inf
+        column = random.choice(valid_moves)
+        for col in valid_moves:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, opponent)
+            new_score = minimax(b_copy, depth-1, alpha, beta, True, player)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+        return (column, value)
 
 
 board = initialize_board()                                              # Make an empty matrix
@@ -244,7 +280,6 @@ turn = random.choice([constant.PLAYER_1-1, constant.PLAYER_2-1])      # Randomly
 pygame.init()                                                           # Initialize Pygames
 pygame.display.set_caption('Connect 4')                                 # Title bar message
 screen = pygame.display.set_mode(constant.WINDOW_SIZE)                 # Draw the window as screen
-
 
 
 def end_game():
@@ -257,13 +292,9 @@ def end_game():
 def ai_move(turn):
     player = turn+1
 
-    # move = random_move(board)
-    move = best_move(board, player)
-    # print(move)
+    move, minimax_score = minimax(board, constant.AI_DEPTH, -math.inf, math.inf, True, player)
 
-    if move:
-        pygame.time.wait(500)
-        # Convert the sring from move to an int
+    if not move == None:
         row = get_next_open_row(board, int(move))
         drop_piece(board, row, int(move), player)
 
@@ -272,7 +303,10 @@ def ai_move(turn):
         draw_borad(board)
     
         if win(board, player):
-            print("You lost to an AI")
+            if constant.ALL_AI_PLAYERS:
+                print("Player " + str(player) + " wins")
+            else:
+                print("You lost to an AI")
             end_game()
             return False
         else:
