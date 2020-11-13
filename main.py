@@ -187,9 +187,13 @@ def evaluate_board(board, player):
     score = 0
 
     # Score center col
-    center_array = [int(i) for i in list(board[:,constant.COLUMN_COUNT//2])]
+    if constant.COLUMN_COUNT % 2: # If the column count is odd
+        center_array = [int(i) for i in list(board[:,(constant.COLUMN_COUNT+1)//2])]
+    else: # If the column count is eaven
+        center_array = [int(i) for i in list(board[:,constant.COLUMN_COUNT//2])]
+
     center_count = center_array.count(player)
-    score += center_count * 3
+    score += center_count * 2
 
     # Score horizontal
     for r in range(constant.ROW_COUNT):
