@@ -1,11 +1,14 @@
 import pygame
 import numpy as np
 import sys
+import random
 
 # Constants
+AI_PLAYER = True
+
 ROW_COUNT = 6           #Default 6
 COLUMN_COUNT = 7        #Default 7
-WINNING_AMOUNT = 4      #Default 4
+WINNING_AMOUNT = 40      #Default 4
 
 COLOR_TEXT = pygame.Color("#d9d9d9")
 COLOR_BACKGROUND = pygame.Color("#999999")
@@ -131,6 +134,29 @@ def draw_borad(board, heightlighted=None):
     pygame.display.update()
 
 
+def get_possible_moves():
+    moves=[]
+
+    for c in range(COLUMN_COUNT):
+        if board[ROW_COUNT-1][c] == 0:
+            moves.append(c)
+
+    if not moves == []:
+        return moves
+    else:
+        return False
+
+
+def randomMove():
+    list = get_possible_moves()
+    if list :
+        move = random.choice(list)
+        # Return as a string so the 0 index doesn coundt as None
+        return str(move)
+    else:
+        return False
+
+
 board = initialize_board()
 game_running = True
 turn = 0
@@ -146,7 +172,31 @@ window_size = (width, height)
 screen = pygame.display.set_mode(window_size)
 
 
-def play(turn, col):
+def ai_move(turn):
+    global game_running
+
+    player = turn+1
+
+    move = randomMove()
+    if move:
+        # Convert the sring from move to an int
+        row = get_next_open_row(board, int(move))
+        drop_piece(board, row, int(move), player)
+
+        if win(board, player):
+            print("You loset to AI")
+            game_running = False
+
+        # Debuging
+        # print_board(board)
+        draw_borad(board)
+        return True
+    else:
+        print("THE AI SUCKS!")
+        return False
+
+
+def make_move(turn, col):
     global game_running
 
     player = turn+1
@@ -158,32 +208,52 @@ def play(turn, col):
         if win(board, player):
             print("Player " + str(player) + " wins")
             game_running = False
+        
+        # Debuging
+        # print_board(board)
+        draw_borad(board)
+        return True
     else:
-        pass
+        return False
 
-    draw_borad(board)
 
-    # Debuging
-    # print_board(board)
+def bumpTurn():
+    global turn
+
+    turn += 1
+    turn = turn % 2
 
 
 while game_running:
     # Event listeners
     for event in pygame.event.get():
+        # System exiter
         if event.type == pygame.QUIT:
             sys.exit()
 
+        # Mouse movement, pos of the cursor
         if event.type == pygame.MOUSEMOTION:
             col = int(event.pos[0] / SQUARE_SIZE)
             draw_borad(board, col)
 
+        # Mosue 1 click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             col = int(event.pos[0] / SQUARE_SIZE)
-            play(turn, col)
+            moved = make_move(turn, col)
+            if moved:
+                bumpTurn()
 
-            # Bump the turn number
-            turn += 1
-            turn = turn % 2
-        
+        # Sleep a bit before shitting down
         if game_running == False:
             pygame.time.wait(1000)
+
+    # Make a play if ther is an AI and its the "1" turn
+    if AI_PLAYER and turn == 1:
+        moved = ai_move(turn)
+        if moved:
+            bumpTurn()
+
+    # Kill window if there cant be any made any more moves
+    if not get_possible_moves():
+        pygame.time.wait(1000)
+        game_running = False
