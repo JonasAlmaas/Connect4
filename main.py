@@ -7,7 +7,7 @@ import math
 
 class Constant():
     def __init__(self):
-        self.AI_PLAYER = False                                                   # Use if you don't have any friends to play against
+        self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
         self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
@@ -56,6 +56,7 @@ def get_next_open_row(borad, col):
     for r in range(constant.ROW_COUNT):
         if borad[r][col] == 0:
             return r
+
 
 
 # Place a piece in the board
@@ -299,7 +300,7 @@ screen = pygame.display.set_mode(constant.WINDOW_SIZE)                  # Draw t
 def end_game():
     global game_running
 
-    pygame.time.wait(1000)
+    pygame.time.wait(3000)
     game_running = False
 
 
@@ -375,8 +376,9 @@ while game_running:
                     player = constant.PLAYER_2_HOVER
                 # Make a copy of the board and place it
                 b_copy = board.copy()
-                row = get_next_open_row(b_copy,col)
-                drop_piece(b_copy, row, col, player)
+                if is_valid_loction(b_copy, col):
+                    row = get_next_open_row(b_copy,col)
+                    drop_piece(b_copy, row, col, player)
                 draw_borad(b_copy, col)
 
         # Mosue 1 click
