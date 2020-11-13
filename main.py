@@ -8,8 +8,8 @@ import math
 class Constant():
     def __init__(self):
         self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
-        self.ALL_AI_PLAYERS = True                                              # Use if you want the AI to make all the moves
-        self.AI_DEPTH = 5                                                       # How many round in to the future
+        self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
+        self.AI_DEPTH = 4                                                       # How many round in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
         self.PLAYER_1 = 1                                                       # Default Player
@@ -228,7 +228,7 @@ def minimax(board, depth, alpha, beta, maximizing, player):
         opponent = constant.PLAYER_1
 
     valid_moves = get_valid_moves(board)
-    is_terminal = win(board, constant.PLAYER_1) or win(board, constant.PLAYER_2) or len(get_valid_moves(board)) == 0
+    is_terminal = win(board, constant.PLAYER_1) or win(board, constant.PLAYER_2) or valid_moves == False
     if depth == 0 or is_terminal:
         if is_terminal:
             if win(board, player):
