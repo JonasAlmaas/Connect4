@@ -7,13 +7,15 @@ import math
 
 class Constant():
     def __init__(self):
-        self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
+        self.AI_PLAYER = False                                                   # Use if you don't have any friends to play against
         self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
         self.PLAYER_1 = 1                                                       # Default Player
+        self.PLAYER_1_HOVER = 3                                                 # Player 1 hover
         self.PLAYER_2 = 2                                                       # Default AI
+        self.PLAYER_2_HOVER = 4                                                 # Player 2 hover
 
         self.ROW_COUNT = 6                                                      # Default 6
         self.COLUMN_COUNT = 7                                                   # Default 7
@@ -23,7 +25,10 @@ class Constant():
         self.COLOR_BOARD = pygame.Color("#4a4a4a")                              # Board color
         self.COLOR_HOVER_PLAYER = pygame.Color("#575757")                       # Hovering color, when picking a move
         self.COLOR_PLAYER_1 = pygame.Color("#eb4034")                           # Player 1 color, red
+        self.COLOR_PREVIEW_PLAYER_1 = pygame.Color("#ad6b66")                   # Preview player 1 color, red ish
         self.COLOR_PLAYER_2 = pygame.Color("#ebe834")                           # Player 2 color, yellow
+        self.COLOR_PREVIEW_PLAYER_2 = pygame.Color("#b3b162")                   # Preview player 2 color, yellow ish
+
 
         self.SQUARE_SIZE = 100                                                  # 100 is a nice number
         self.PIECE_RADIUS = int(self.SQUARE_SIZE/2*0.75)                        # How big the circles are in relation to the squares
@@ -144,6 +149,11 @@ def draw_borad(board, heightlighted=None):
                 pygame.draw.circle(screen, constant.COLOR_PLAYER_1, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
             elif board[r][c] == constant.PLAYER_2:
                 pygame.draw.circle(screen, constant.COLOR_PLAYER_2, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
+            elif board[r][c] == constant.PLAYER_1_HOVER:
+                pygame.draw.circle(screen, constant.COLOR_PREVIEW_PLAYER_1, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
+            elif board[r][c] == constant.PLAYER_2_HOVER:
+                pygame.draw.circle(screen, constant.COLOR_PREVIEW_PLAYER_2, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
+
 
     pygame.display.update()
 
@@ -320,7 +330,7 @@ def ai_move(turn):
         return False
 
 
-def player_move(turn, col):
+def player_move(board, turn, col):
     player = turn+1
 
     if is_valid_loction(board, col):
@@ -353,18 +363,27 @@ while game_running:
         # System exiter
         if event.type == pygame.QUIT:
             sys.exit()
-
         # Mouse movement, pos of the cursor
         if event.type == pygame.MOUSEMOTION:
             if not constant.ALL_AI_PLAYERS:
                 col = int(event.pos[0] / constant.SQUARE_SIZE)
-                draw_borad(board, col)
+                player = 0
+                # Set the player to the hover of the player
+                if turn == constant.PLAYER_1 -1:
+                    player = constant.PLAYER_1_HOVER
+                elif turn == constant.PLAYER_2 -1:
+                    player = constant.PLAYER_2_HOVER
+                # Make a copy of the board and place it
+                b_copy = board.copy()
+                row = get_next_open_row(b_copy,col)
+                drop_piece(b_copy, row, col, player)
+                draw_borad(b_copy, col)
 
         # Mosue 1 click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if not constant.ALL_AI_PLAYERS:
                 col = int(event.pos[0] / constant.SQUARE_SIZE)
-                moved = player_move(turn, col)
+                moved = player_move(board, turn, col)
                 if moved:
                     bumpTurn()
 
