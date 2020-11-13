@@ -59,7 +59,7 @@ def drop_piece(borad, row, col, player):
 
 
 # Rules
-def win(board, piece):
+def win(board, player):
     # Check horizontal locations for win
     for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
         for r in range(constant.ROW_COUNT):
@@ -67,7 +67,7 @@ def win(board, piece):
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
-                if board[r][c+slot] == piece:
+                if board[r][c+slot] == player:
                     piece_count += 1
                 else:
                     break
@@ -81,7 +81,7 @@ def win(board, piece):
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
-                if board[r+slot][c] == piece:
+                if board[r+slot][c] == player:
                     piece_count += 1
                 else:
                     break
@@ -95,7 +95,7 @@ def win(board, piece):
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece, add to the piece count
-                if board[r+slot][c+slot] == piece:
+                if board[r+slot][c+slot] == player:
                     piece_count += 1
                 else:
                     break
@@ -109,7 +109,7 @@ def win(board, piece):
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
-                if board[r-slot][c+slot] == piece:
+                if board[r-slot][c+slot] == player:
                     piece_count += 1
                 else:
                     break
