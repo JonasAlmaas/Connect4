@@ -177,17 +177,11 @@ def evaluate_window(window, player):
     for i in range(1, const.WINNING_COUNT-1):
         if window.count(player) == const.WINNING_COUNT-i and window.count(const.EMPTY) == i:
             score += (const.WINNING_COUNT - i) * 2.5
-    # Make a winning move all the time
-    if window.count(player) == const.WINNING_COUNT and window.count(const.EMPTY):
-        score += (const.WINNING_COUNT) * 100
 
     # Score the opponent
     for i in range(1, const.WINNING_COUNT-1):
         if window.count(opponent) == const.WINNING_COUNT-i and window.count(const.EMPTY) == i:
             score -= (const.WINNING_COUNT - i) * 2.25
-    # Prevent all winning moves
-    if window.count(player) == const.WINNING_COUNT and window.count(const.EMPTY):
-        score -= (const.WINNING_COUNT) * 100
 
     return score
 
@@ -319,8 +313,8 @@ def ai_move(board, turn):
         if win(board, player)[0]:
             if const.ALL_AI_PLAYERS:
                 print("Player " + str(player) + " wins")
-            else:
-                print("You lost to an AI")
+            # else:
+            #     print("You lost to an AI")
 
             end_game(board, True, player)
             return False
