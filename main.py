@@ -7,7 +7,7 @@ import math
 
 class Constant():
     def __init__(self):
-        self.AI_PLAYER = False                                                   # Use if you don't have any friends to play against
+        self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
         self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
@@ -311,9 +311,7 @@ def end_game(won, player=0):
 
     if won:
         winning_window = win(board, player)[1]
-        # b_copy = board.copy()
         for piece in winning_window:
-
             drop_piece(board, piece[0], piece[1], constant.VICTORY_HEIGHTLIGHT)
         draw_borad(board)
 
@@ -339,7 +337,8 @@ def ai_move(turn):
                 print("Player " + str(player) + " wins")
             else:
                 print("You lost to an AI")
-            end_game(False, player)
+
+            end_game(True, player)
             return False
         else:
             return True
