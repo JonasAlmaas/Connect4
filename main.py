@@ -10,7 +10,7 @@ import draw
 class Constant():
     def __init__(self):
         self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
-        self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
+        self.ALL_AI_PLAYERS = True                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
@@ -239,9 +239,9 @@ def minimax(board, depth, alpha, beta, maximizing, player):
     if depth == 0 or is_terminal:
         if is_terminal:
             if win(board, player)[0]:
-                return (None, 100000000000000)
+                return (None, sys.maxsize)
             elif win(board, opponent)[0]:
-                return (None, -100000000000000)
+                return (None, -sys.maxsize-1)
             else: # No more valid moves
                 return (None, 0)
         else: # If the depth is 0
