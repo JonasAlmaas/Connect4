@@ -7,7 +7,7 @@ import math
 
 class Constant():
     def __init__(self):
-        self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
+        self.AI_PLAYER = False                                                   # Use if you don't have any friends to play against
         self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
@@ -16,6 +16,7 @@ class Constant():
         self.PLAYER_1_HOVER = 3                                                 # Player 1 hover
         self.PLAYER_2 = 2                                                       # Default AI
         self.PLAYER_2_HOVER = 4                                                 # Player 2 hover
+        self.VICTORY_HEIGHTLIGHT = 5                                            # Heighligts a victory
 
         self.ROW_COUNT = 6                                                      # Default 6
         self.COLUMN_COUNT = 7                                                   # Default 7
@@ -23,12 +24,12 @@ class Constant():
 
         self.COLOR_BACKGROUND = pygame.Color("#999999")                         # Background color, empty slots
         self.COLOR_BOARD = pygame.Color("#4a4a4a")                              # Board color
-        self.COLOR_HOVER_PLAYER = pygame.Color("#575757")                       # Hovering color, when picking a move
+        self.COLOR_HEIGHLIGHT_COLUMN = pygame.Color("#575757")                  # Hovering color, when picking a move
+        self.COLOR_HEIGHLIGHT_VICTORY = pygame.Color("#3295a8")                 # Heighlighs a victory
         self.COLOR_PLAYER_1 = pygame.Color("#eb4034")                           # Player 1 color, red
         self.COLOR_PREVIEW_PLAYER_1 = pygame.Color("#ad6b66")                   # Preview player 1 color, red ish
         self.COLOR_PLAYER_2 = pygame.Color("#ebe834")                           # Player 2 color, yellow
         self.COLOR_PREVIEW_PLAYER_2 = pygame.Color("#b3b162")                   # Preview player 2 color, yellow ish
-
 
         self.SQUARE_SIZE = 100                                                  # 100 is a nice number
         self.PIECE_RADIUS = int(self.SQUARE_SIZE/2*0.75)                        # How big the circles are in relation to the squares
@@ -69,58 +70,65 @@ def win(board, player):
     # Check horizontal locations for win
     for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
         for r in range(constant.ROW_COUNT):
-            # Temp count of how many pieces are in a row
+            winning_window = []
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
                 if board[r][c+slot] == player:
                     piece_count += 1
+                    winning_window.append([r, c+slot])
                 else:
                     break
             if piece_count == constant.WINNING_COUNT:
-                return True
+                return (True, winning_window)
 
     # Check for vertical locations for win
     for c in range(constant.COLUMN_COUNT):
         for r in range(constant.ROW_COUNT-(constant.WINNING_COUNT-1)):
-            # Temp count of how many pieces are in a row
+            winning_window = []
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
                 if board[r+slot][c] == player:
                     piece_count += 1
+                    winning_window.append([r+slot, c])
                 else:
                     break
             if piece_count == constant.WINNING_COUNT:
-                return True
+                return (True, winning_window)
 
     # Check for positivly sloped diaganold
     for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
         for r in range(constant.ROW_COUNT-(constant.WINNING_COUNT-1)):
-            # Temp count of how many pieces are in a row
+            winning_window = []
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece, add to the piece count
                 if board[r+slot][c+slot] == player:
                     piece_count += 1
+                    winning_window.append([r+slot, c+slot])
                 else:
                     break
             if piece_count == constant.WINNING_COUNT:
-                return True
+                return (True, winning_window)
 
     # Check for negativly sloped diaganold
     for c in range(constant.COLUMN_COUNT-(constant.WINNING_COUNT-1)):
         for r in range((constant.WINNING_COUNT-1), constant.ROW_COUNT):
-            # Temp count of how many pieces are in a row
+            winning_window = []
             piece_count = 0
             for slot in range(constant.WINNING_COUNT):
                 # If you find a piece add on to the piece count
                 if board[r-slot][c+slot] == player:
                     piece_count += 1
+                    winning_window.append([r-slot, c+slot])
                 else:
                     break
             if piece_count == constant.WINNING_COUNT:
-                return True
+                return (True, winning_window)
+
+    # Return this if there are no wins
+    return (None, None)
 
 
 # Print the board to the console
@@ -133,13 +141,13 @@ def print_board(borad):
 def draw_borad(board, heightlighted=None):
     for c in range(constant.COLUMN_COUNT):
         for r in range(constant.ROW_COUNT):
-            if not c == heightlighted:
+            if c == heightlighted:
+                # Hover color when droping a piece
+                pygame.draw.rect(screen, constant.COLOR_HEIGHLIGHT_COLUMN, (c*constant.SQUARE_SIZE, r*constant.SQUARE_SIZE, constant.SQUARE_SIZE, constant.SQUARE_SIZE))
+            else:
                 # Board
                 pygame.draw.rect(screen, constant.COLOR_BOARD, (c*constant.SQUARE_SIZE, r*constant.SQUARE_SIZE, constant.SQUARE_SIZE, constant.SQUARE_SIZE))
-
-            # Hover color when droping a piece
-            else:
-                pygame.draw.rect(screen, constant.COLOR_HOVER_PLAYER, (c*constant.SQUARE_SIZE, r*constant.SQUARE_SIZE, constant.SQUARE_SIZE, constant.SQUARE_SIZE))
+                
 
             # Empty slots
             pygame.draw.circle(screen, constant.COLOR_BACKGROUND, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
@@ -154,7 +162,8 @@ def draw_borad(board, heightlighted=None):
                 pygame.draw.circle(screen, constant.COLOR_PREVIEW_PLAYER_1, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
             elif board[r][c] == constant.PLAYER_2_HOVER:
                 pygame.draw.circle(screen, constant.COLOR_PREVIEW_PLAYER_2, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
-
+            elif board[r][c] == constant.VICTORY_HEIGHTLIGHT:
+                pygame.draw.circle(screen, constant.COLOR_HEIGHLIGHT_VICTORY, (c*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2, (constant.SCREEN_HEIGTH-constant.SQUARE_SIZE)-r*constant.SQUARE_SIZE+constant.SQUARE_SIZE/2), constant.PIECE_RADIUS)
 
     pygame.display.update()
 
@@ -243,12 +252,12 @@ def minimax(board, depth, alpha, beta, maximizing, player):
         opponent = constant.PLAYER_1
 
     valid_moves = get_valid_moves(board)
-    is_terminal = win(board, constant.PLAYER_1) or win(board, constant.PLAYER_2) or valid_moves == False
+    is_terminal = win(board, constant.PLAYER_1)[0] or win(board, constant.PLAYER_2)[0] or valid_moves == False
     if depth == 0 or is_terminal:
         if is_terminal:
-            if win(board, player):
+            if win(board, player)[0]:
                 return (None, 100000000)
-            elif win(board, opponent):
+            elif win(board, opponent)[0]:
                 return (None, -100000000)
             else: # No more valid moves
                 return (None, 0)
@@ -297,8 +306,16 @@ pygame.display.set_caption('Connect 4')                                 # Title 
 screen = pygame.display.set_mode(constant.WINDOW_SIZE)                  # Draw the window as screen
 
 
-def end_game():
+def end_game(won, player=0):
     global game_running
+
+    if won:
+        winning_window = win(board, player)[1]
+        # b_copy = board.copy()
+        for piece in winning_window:
+
+            drop_piece(board, piece[0], piece[1], constant.VICTORY_HEIGHTLIGHT)
+        draw_borad(board)
 
     pygame.time.wait(3000)
     game_running = False
@@ -317,12 +334,12 @@ def ai_move(turn):
         # print_board(board)
         draw_borad(board)
     
-        if win(board, player):
+        if win(board, player)[0]:
             if constant.ALL_AI_PLAYERS:
                 print("Player " + str(player) + " wins")
             else:
                 print("You lost to an AI")
-            end_game()
+            end_game(False, player)
             return False
         else:
             return True
@@ -342,9 +359,9 @@ def player_move(board, turn, col):
         # print_board(board)
         draw_borad(board)
 
-        if win(board, player):
+        if win(board, player)[0]:
             print("Player " + str(player) + " wins")
-            end_game()
+            end_game(True, player)
         else:
             return True
     else:
@@ -403,4 +420,4 @@ while game_running:
 
     # Kill window if there cant be any made any more moves
     if not get_valid_moves(board):
-        end_game()
+        end_game(False)
