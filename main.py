@@ -3,7 +3,6 @@ import numpy as np
 import sys
 import random
 import math
-from threading import *
 
 import draw
 
@@ -175,13 +174,20 @@ def evaluate_window(window, player):
         opponent = const.PLAYER_1
 
     # Score the player
-    for i in range(0, const.WINNING_COUNT-1):
+    for i in range(1, const.WINNING_COUNT-1):
         if window.count(player) == const.WINNING_COUNT-i and window.count(const.EMPTY) == i:
             score += (const.WINNING_COUNT - i) * 2.5
+    # Make a winning move all the time
+    if window.count(player) == const.WINNING_COUNT and window.count(const.EMPTY):
+        score += (const.WINNING_COUNT) * 100
+
     # Score the opponent
-    for i in range(0, const.WINNING_COUNT-1):
+    for i in range(1, const.WINNING_COUNT-1):
         if window.count(opponent) == const.WINNING_COUNT-i and window.count(const.EMPTY) == i:
             score -= (const.WINNING_COUNT - i) * 2.25
+    # Prevent all winning moves
+    if window.count(player) == const.WINNING_COUNT and window.count(const.EMPTY):
+        score -= (const.WINNING_COUNT) * 100
 
     return score
 
