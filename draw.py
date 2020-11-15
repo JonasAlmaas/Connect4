@@ -24,8 +24,8 @@ def board(board, const, var, heightlighted=None):
                 pygame.draw.circle(var.screen, const.COLOR_PREVIEW_PLAYER_1, (c*const.SQUARE_SIZE+const.SQUARE_SIZE/2, (const.SCREEN_HEIGTH-const.SQUARE_SIZE)-r*const.SQUARE_SIZE+const.SQUARE_SIZE/2), const.PIECE_RADIUS)
             elif board[r][c] == const.PLAYER_2_HOVER:
                 pygame.draw.circle(var.screen, const.COLOR_PREVIEW_PLAYER_2, (c*const.SQUARE_SIZE+const.SQUARE_SIZE/2, (const.SCREEN_HEIGTH-const.SQUARE_SIZE)-r*const.SQUARE_SIZE+const.SQUARE_SIZE/2), const.PIECE_RADIUS)
-            # elif board[r][c] == const.PLAYER_VICTORY_HEIGHTLIGHT:
-            #     pygame.draw.circle(var.screen, const.COLOR_HEIGHLIGHT_VICTORY, (c*const.SQUARE_SIZE+const.SQUARE_SIZE/2, (const.SCREEN_HEIGTH-const.SQUARE_SIZE)-r*const.SQUARE_SIZE+const.SQUARE_SIZE/2), const.PIECE_RADIUS)
+
+            # Draw victory markings
             if board[r][c] == const.PLAYER_1_VICTORY_HEIGHTLIGHT or board[r][c] == const.PLAYER_2_VICTORY_HEIGHTLIGHT:
                 pygame.draw.circle(var.screen, const.COLOR_HEIGHLIGHT_VICTORY, (c*const.SQUARE_SIZE+const.SQUARE_SIZE/2, (const.SCREEN_HEIGTH-const.SQUARE_SIZE)-r*const.SQUARE_SIZE+const.SQUARE_SIZE/2), const.PIECE_RADIUS/2)
 

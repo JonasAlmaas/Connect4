@@ -10,7 +10,7 @@ import draw
 class Constant():
     def __init__(self):
         self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
-        self.ALL_AI_PLAYERS = True                                             # Use if you want the AI to make all the moves
+        self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
         self.AI_DEPTH = 4                                                       # How many round in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
