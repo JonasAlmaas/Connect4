@@ -7,11 +7,11 @@ import math
 import draw
 
 
-class Constant():
+class Constants():
     def __init__(self):
         self.AI_PLAYER = True                                                   # Use if you don't have any friends to play against
         self.ALL_AI_PLAYERS = False                                             # Use if you want the AI to make all the moves
-        self.AI_DEPTH = 4                                                       # How many round in to the future
+        self.AI_DEPTH = 4                                                       # How many rounds in to the future
 
         self.EMPTY = 0                                                          # Slots that are not filled in
         self.PLAYER_1 = 1                                                       # Default Player
@@ -28,7 +28,7 @@ class Constant():
         self.COLOR_BACKGROUND = pygame.Color("#999999")                         # Background color, empty slots
         self.COLOR_BOARD = pygame.Color("#4a4a4a")                              # Board color
         self.COLOR_HEIGHLIGHT_COLUMN = pygame.Color("#575757")                  # Hovering color, when picking a move
-        self.COLOR_HEIGHLIGHT_VICTORY = pygame.Color("#3295a8")                 # Heighlighs a victory
+        self.COLOR_HEIGHLIGHT_VICTORY = pygame.Color("#3e759c")                 # Heighlighs a victory
         self.COLOR_PLAYER_1 = pygame.Color("#eb4034")                           # Player 1 color, red
         self.COLOR_PREVIEW_PLAYER_1 = pygame.Color("#ad6b66")                   # Preview player 1 color, red ish
         self.COLOR_PLAYER_2 = pygame.Color("#ebe834")                           # Player 2 color, yellow
@@ -52,18 +52,18 @@ class Variables():
         self.turn = None
 
 
-const = Constant()
+const = Constants()
 var = Variables()
 
 
 # Debug tool
-def print_board(board):             # Print board in consol
-    print(np.flip(board, 0))        # Flip the board to appeal to Sir. Isaac Newton
+def print_board(board):             # Print board in console
+    print(np.flip(board, 0))        # Flip the board to appeal to Sir Isaac Newton
 
 
 # Create an empty board matrix
 def generate_board():
-    board = np.zeros((const.ROW_COUNT,const.COLUMN_COUNT))
+    board = np.zeros((const.ROW_COUNT, const.COLUMN_COUNT))
     return board
 
 
@@ -421,6 +421,6 @@ while var.app_running:
         # System exiter
         if event.type == pygame.QUIT:
             sys.exit()
-        # Mosue 1 click
+        # Mouse 1 click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             new_game()
