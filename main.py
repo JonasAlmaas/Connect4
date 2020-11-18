@@ -378,14 +378,14 @@ def new_game():
                     col = int(event.pos[0] / const.SQUARE_SIZE)
                     player = None
                     # Set the player whoever is making the move
-                    if var.turn == const.PLAYER_1 -1:           # -1 since players are 1 and 2 and turns are 0 and 1
+                    if var.turn == const.PLAYER_1 -1:                               # -1 since players are 1 and 2 and turns are 0 and 1
                         player = const.PLAYER_1_HOVER
-                    elif var.turn == const.PLAYER_2 -1:         # -1 since players are 1 and 2 and turns are 0 and 1
+                    elif var.turn == const.PLAYER_2 -1:                             # -1 since players are 1 and 2 and turns are 0 and 1
                         player = const.PLAYER_2_HOVER
-                    if is_valid_move(b_copy, col):           # If the column has any valid locations to dopor a pice
-                        row = get_next_open_row(b_copy,col)     # Get the row that pice will land at
-                        drop_piece(b_copy, row, col, player)    # Drop the piece in the copied board
-                    draw.board(b_copy, const, var, col)                     # Draw the copied board on screen
+                    if is_valid_move(b_copy, col):                                  # If the column has any valid locations to dopor a pice
+                        row = get_next_open_row(b_copy,col)                         # Get the row that pice will land at
+                        drop_piece(b_copy, row, col, player)                        # Drop the piece in the copied board
+                    draw.board(b_copy, const, var, col)                             # Draw the copied board on screen
 
             # Mosue 1 click
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
