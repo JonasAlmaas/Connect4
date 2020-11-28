@@ -15,6 +15,7 @@ def draw_star(var, const, r, c, outer_radius, inner_radius, steps):
         x = c * const.SQUARE_SIZE + const.SQUARE_SIZE / 2 + point[0]
         y = (const.SCREEN_HEIGTH-const.SQUARE_SIZE) - r * const.SQUARE_SIZE + const.SQUARE_SIZE / 2 + point[1]
         points.append((x, y))
+        
     pygame.draw.polygon(var.screen, const.COLOR_HEIGHLIGHT_VICTORY, points)
 
 
@@ -44,9 +45,5 @@ def board(board, const, var, heightlighted=None):
             # Draw victory markings
             if board[r][c] == const.PLAYER_1_VICTORY_HEIGHTLIGHT or board[r][c] == const.PLAYER_2_VICTORY_HEIGHTLIGHT:
                 draw_star(var, const, r, c, 25, 10, 5)
-
-
-            # if board[r][c] == const.PLAYER_1_VICTORY_HEIGHTLIGHT or board[r][c] == const.PLAYER_2_VICTORY_HEIGHTLIGHT:
-            #     pygame.draw.circle(var.screen, const.COLOR_HEIGHLIGHT_VICTORY, (c*const.SQUARE_SIZE+const.SQUARE_SIZE/2, (const.SCREEN_HEIGTH-const.SQUARE_SIZE)-r*const.SQUARE_SIZE+const.SQUARE_SIZE/2), const.PIECE_RADIUS/2)
 
     pygame.display.update()
