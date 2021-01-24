@@ -1,8 +1,8 @@
-from connect4.engine.application_handler import ApplicationHandler
+from connect4.engine.application_manager import ApplicationManager
 
 
 def main():
-    ApplicationHandler()
+    ApplicationManager()
 
 
 if __name__ == '__main__':

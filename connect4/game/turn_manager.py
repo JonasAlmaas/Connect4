@@ -1,11 +1,11 @@
 import random
 
-from .ai_handler import AIHandler
+from .ai_manager import AIManager
 
 
-class TurnHandler:
-    def __init__(self, ai_handler: AIHandler):
-        self.ai_handler = ai_handler
+class TurnManager:
+    def __init__(self, ai_manager: AIManager):
+        self.ai_manager = ai_manager
 
     def swap(self):
         if self.turn == 'p1':
@@ -17,10 +17,10 @@ class TurnHandler:
         self.turn = random.choice(('p1', 'p2'))
     
     def is_ai_turn(self):
-        if self.ai_handler.all_player:
+        if self.ai_manager.all_player:
             return True
 
-        if self.ai_handler.opponent and self.turn == 'p2':
+        if self.ai_manager.opponent and self.turn == 'p2':
             return True
 
         return False

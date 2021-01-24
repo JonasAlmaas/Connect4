@@ -1,7 +1,7 @@
 import pygame
 
 
-class WindowHandler:
+class WindowManager:
     def __init__(self, title: str = 'Title', width: int = 900, height: int = 700):
         pygame.init()
 

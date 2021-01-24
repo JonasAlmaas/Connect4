@@ -1,16 +1,16 @@
-from .piece_handler import PieceHandler
-from .logic_handler import LogicHandler
+from .piece_manager import PieceManager
+from .logic_manager import LogicManager
 
 
-class BoardHandler:
+class BoardManager:
     def __init__(self, rows: int = 6, cols: int = 7):
         self.rows = rows
         self.cols = cols
 
-        self.logic_handler = LogicHandler(board_handler=self)
+        self.logic_manager = LogicManager(board_manager=self)
 
         self.margin_top = 15
-        self.matrix = [[PieceHandler(type='blank') for _ in range(self.cols)] for _ in range(self.rows)]
+        self.matrix = [[PieceManager(type='blank') for _ in range(self.cols)] for _ in range(self.rows)]
 
         self.width = 0
         self.hight = 0
@@ -18,7 +18,7 @@ class BoardHandler:
         self.y = 0
 
     def drop_piece(self, col, type):
-        row = self.logic_handler.get_first_empty_row(col=col)
+        row = self.logic_manager.get_first_empty_row(col=col)
         self.matrix[row][col].set_type(type)
 
     def get_coords(self, pos):

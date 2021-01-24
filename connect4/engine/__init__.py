@@ -1,3 +1,3 @@
-from . import application_handler
-from . import input_handler
-from . import window_handler
+from . import application_manager
+from . import input_manager
+from . import window_manager

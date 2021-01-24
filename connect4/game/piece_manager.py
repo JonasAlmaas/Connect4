@@ -10,7 +10,7 @@ colors = {
     }
 
 
-class PieceHandler:
+class PieceManager:
     def __init__(self, type):
         self.set_type(type)
         self.is_winning_piece = False
