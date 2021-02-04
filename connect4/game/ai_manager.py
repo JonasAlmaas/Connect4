@@ -2,8 +2,6 @@ import random
 import sys
 import copy
 
-from numpy.matrixlib.defmatrix import matrix
-
 from .board_manager import BoardManager
 from .evaluation_manager import EvaluationManager
 
@@ -13,7 +11,7 @@ class AIManager:
         self.game_manager = game_manager
         self.evaluation_manager = EvaluationManager()
 
-        self.all_boards = {}
+        self.lookup_table = {}
 
         self.opponent = True
         self.all_player = False
